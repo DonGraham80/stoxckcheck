@@ -182,6 +182,48 @@ class ApiService {
       body: JSON.stringify(data),
     });
   }
+
+  async createItem(data: {
+    sku: string;
+    name: string;
+    category: string;
+    storageType: string;
+    baseUom: string;
+    packUom?: string;
+    packSize?: number;
+    caseUom?: string;
+    caseSize?: number;
+    standardCost: number;
+  }): Promise<{ id: string; message: string }> {
+    return this.request('/items', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateItem(id: string, data: {
+    sku: string;
+    name: string;
+    category: string;
+    storageType: string;
+    baseUom: string;
+    packUom?: string;
+    packSize?: number;
+    caseUom?: string;
+    caseSize?: number;
+    standardCost: number;
+  }): Promise<{ message: string }> {
+    return this.request(`/items/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteItem(id: string): Promise<{ message: string }> {
+    return this.request(`/items/${id}`, {
+      method: 'DELETE',
+    });
+  }
 }
 
 export const apiService = new ApiService();

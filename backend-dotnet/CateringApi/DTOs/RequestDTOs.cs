@@ -180,4 +180,62 @@ namespace CateringApi.DTOs
         
         public string? TenantId { get; set; }
     }
+
+    public class CreateItemRequest
+    {
+        [Required]
+        public string Sku { get; set; } = string.Empty;
+        
+        [Required]
+        public string Name { get; set; } = string.Empty;
+        
+        [Required]
+        public string Category { get; set; } = string.Empty;
+        
+        [Required]
+        public StorageType StorageType { get; set; }
+        
+        [Required]
+        public string BaseUom { get; set; } = string.Empty;
+        
+        public string? PackUom { get; set; }
+        
+        public int? PackSize { get; set; }
+        
+        public string? CaseUom { get; set; }
+        
+        public int? CaseSize { get; set; }
+        
+        [Required]
+        public decimal StandardCost { get; set; }
+    }
+
+    public class UpdateItemRequest
+    {
+        [Required]
+        public string Sku { get; set; } = string.Empty;
+        
+        [Required]
+        public string Name { get; set; } = string.Empty;
+        
+        [Required]
+        public string Category { get; set; } = string.Empty;
+        
+        [Required]
+        public StorageType StorageType { get; set; }
+        
+        [Required]
+        public string BaseUom { get; set; } = string.Empty;
+        
+        public string? PackUom { get; set; }
+        
+        public int? PackSize { get; set; }
+        
+        public string? CaseUom { get; set; }
+        
+        public int? CaseSize { get; set; }
+        
+        [Required]
+        public decimal StandardCost { get; set; }
+    }
 }

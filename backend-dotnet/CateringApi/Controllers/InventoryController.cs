@@ -532,5 +532,146 @@ namespace CateringApi.Controllers
                 return BadRequest(new { error = ex.Message });
             }
         }
+
+        [HttpPost("items")]
+        public async Task<IActionResult> CreateItem([FromBody] CreateItemRequest request)
+        {
+            try
+            {
+                var tenantId = GetTenantId();
+                
+                var existingItem = await _context.Items
+                    .FirstOrDefaultAsync(i => i.Sku == request.Sku && i.TenantId == tenantId);
+                
+                if (existingItem != null)
+                {
+                    return BadRequest(new { error = "An item with this SKU already exists" });
+                }
+
+                var item = new Item
+                {
+                    TenantId = tenantId,
+                    Sku = request.Sku,
+                    Name = request.Name,
+                    Category = request.Category,
+                    StorageType = request.StorageType,
+                    BaseUom = request.BaseUom,
+                    PackUom = request.PackUom,
+                    PackSize = request.PackSize,
+                    CaseUom = request.CaseUom,
+                    CaseSize = request.CaseSize,
+                    StandardCost = (double?)request.StandardCost
+                };
+
+                _context.Items.Add(item);
+                await _context.SaveChangesAsync();
+
+                var response = new ItemResponse
+                {
+                    Id = item.Id,
+                    Sku = item.Sku,
+                    Name = item.Name,
+                    Category = item.Category,
+                    StorageType = item.StorageType,
+                    BaseUom = item.BaseUom,
+                    StandardCost = item.StandardCost
+                };
+
+                return Ok(new { id = item.Id, message = "Item created successfully", item = response });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpPut("items/{id}")]
+        public async Task<IActionResult> UpdateItem(string id, [FromBody] UpdateItemRequest request)
+        {
+            try
+            {
+                var tenantId = GetTenantId();
+                
+                var item = await _context.Items
+                    .FirstOrDefaultAsync(i => i.Id == id && i.TenantId == tenantId);
+                
+                if (item == null)
+                {
+                    return NotFound(new { error = "Item not found" });
+                }
+
+                var existingItem = await _context.Items
+                    .FirstOrDefaultAsync(i => i.Sku == request.Sku && i.TenantId == tenantId && i.Id != id);
+                
+                if (existingItem != null)
+                {
+                    return BadRequest(new { error = "An item with this SKU already exists" });
+                }
+
+                item.Sku = request.Sku;
+                item.Name = request.Name;
+                item.Category = request.Category;
+                item.StorageType = request.StorageType;
+                item.BaseUom = request.BaseUom;
+                item.PackUom = request.PackUom;
+                item.PackSize = request.PackSize;
+                item.CaseUom = request.CaseUom;
+                item.CaseSize = request.CaseSize;
+                item.StandardCost = (double?)request.StandardCost;
+
+                await _context.SaveChangesAsync();
+
+                var response = new ItemResponse
+                {
+                    Id = item.Id,
+                    Sku = item.Sku,
+                    Name = item.Name,
+                    Category = item.Category,
+                    StorageType = item.StorageType,
+                    BaseUom = item.BaseUom,
+                    StandardCost = item.StandardCost
+                };
+
+                return Ok(new { message = "Item updated successfully", item = response });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpDelete("items/{id}")]
+        public async Task<IActionResult> DeleteItem(string id)
+        {
+            try
+            {
+                var tenantId = GetTenantId();
+                
+                var item = await _context.Items
+                    .FirstOrDefaultAsync(i => i.Id == id && i.TenantId == tenantId);
+                
+                if (item == null)
+                {
+                    return NotFound(new { error = "Item not found" });
+                }
+
+                var hasInventory = await _context.InventoryLots.AnyAsync(l => l.ItemId == id);
+                var hasMovements = await _context.StockMovements.AnyAsync(m => m.ItemId == id);
+                
+                if (hasInventory || hasMovements)
+                {
+                    return BadRequest(new { error = "Cannot delete item that has inventory or transaction history" });
+                }
+
+                _context.Items.Remove(item);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Item deleted successfully" });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
     }
 }
