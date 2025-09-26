@@ -18,10 +18,11 @@ import ProductionForm from './components/ProductionForm';
 import WastageForm from './components/WastageForm';
 import TransferForm from './components/TransferForm';
 import CountForm from './components/CountForm';
-import VoiceInterface from './components/VoiceInterface';
-import AgentInterface from './components/AgentInterface';
+// import VoiceInterface from './components/VoiceInterface';
+// import AgentInterface from './components/AgentInterface';
+import UserGuide from './components/UserGuide';
 
-type View = 'dashboard' | 'inventory' | 'receipt' | 'production' | 'wastage' | 'transfer' | 'count' | 'voice' | 'agent';
+type View = 'dashboard' | 'inventory' | 'receipt' | 'production' | 'wastage' | 'transfer' | 'count' | 'voice' | 'agent' | 'userguide';
 
 function App() {
   const [currentView, setCurrentView] = useState<View>('dashboard');
@@ -36,6 +37,7 @@ function App() {
     { id: 'count', label: 'Counts', icon: ClipboardList },
     { id: 'voice', label: 'Voice', icon: Mic },
     { id: 'agent', label: 'AI Agent', icon: Bot },
+    { id: 'userguide', label: 'User Guide', icon: HelpCircle },
   ];
 
   const renderView = () => {
@@ -55,9 +57,11 @@ function App() {
       case 'count':
         return <CountForm />;
       case 'voice':
-        return <VoiceInterface />;
+        return <div className="p-6 text-center text-gray-500">Voice Interface - Coming Soon</div>;
       case 'agent':
-        return <AgentInterface />;
+        return <div className="p-6 text-center text-gray-500">AI Agent - Coming Soon</div>;
+      case 'userguide':
+        return <UserGuide />;
       default:
         return <Dashboard />;
     }
@@ -74,15 +78,6 @@ function App() {
               <h1 className="text-2xl font-bold text-gray-900">School Catering Stock Management</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <a
-                href="/USER_GUIDE.md"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center text-sm text-blue-600 hover:text-blue-800 transition-colors"
-              >
-                <HelpCircle className="h-4 w-4 mr-1" />
-                User Guide
-              </a>
               <div className="text-sm text-gray-500">
                 Central High School
               </div>
