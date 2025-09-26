@@ -3,13 +3,13 @@ export interface Item {
   sku: string;
   name: string;
   category: string;
-  storage_type: 'chilled' | 'frozen' | 'ambient';
-  base_uom: string;
-  pack_uom?: string;
-  pack_size?: number;
-  case_uom?: string;
-  case_size?: number;
-  standard_cost: number;
+  storageType: 'chilled' | 'frozen' | 'ambient';
+  baseUom: string;
+  packUom?: string;
+  packSize?: number;
+  caseUom?: string;
+  caseSize?: number;
+  standardCost: number;
 }
 
 export interface Site {
@@ -22,41 +22,41 @@ export interface Site {
 export interface Location {
   id: string;
   name: string;
-  storage_type: 'chilled' | 'frozen' | 'ambient';
+  storageType: 'chilled' | 'frozen' | 'ambient';
 }
 
 export interface Supplier {
   id: string;
   name: string;
-  account_code?: string;
-  contact_email?: string;
+  accountCode?: string;
+  contactEmail?: string;
 }
 
 export interface Recipe {
   id: string;
   name: string;
-  yield_portions: number;
+  yieldPortions: number;
 }
 
 export interface StockMovement {
   id: string;
-  item_id: string;
-  movement_type: 'receipt' | 'production' | 'wastage' | 'transfer' | 'adjustment';
-  qty_base: number;
-  reference_id?: string;
-  reference_type?: string;
+  itemId: string;
+  movementType: 'receipt' | 'production' | 'wastage' | 'transfer' | 'adjustment';
+  qtyBase: number;
+  referenceId?: string;
+  referenceType?: string;
   reason?: string;
-  created_at: string;
+  createdAt: string;
 }
 
 export interface InventoryOnHand {
-  item_id: string;
-  item_name: string;
-  location_id: string;
-  location_name: string;
-  qty_on_hand: number;
-  unit_cost: number;
-  total_value: number;
+  itemId: string;
+  itemName: string;
+  locationId: string;
+  locationName: string;
+  qtyOnHand: number;
+  unitCost: number;
+  totalValue: number;
 }
 
 export interface CreateReceiptRequest {

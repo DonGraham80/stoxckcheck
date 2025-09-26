@@ -29,7 +29,7 @@ const Dashboard: React.FC = () => {
   }, []);
 
   const movementTypeData = stockMovements.reduce((acc, movement) => {
-    const type = movement.movement_type;
+    const type = movement.movementType;
     acc[type] = (acc[type] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
@@ -46,7 +46,7 @@ const Dashboard: React.FC = () => {
 
   const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884D8'];
 
-  const totalValue = inventoryOnHand.reduce((sum, item) => sum + item.total_value, 0);
+  const totalValue = inventoryOnHand.reduce((sum, item) => sum + item.totalValue, 0);
   const totalItems = inventoryOnHand.length;
   const recentMovements = stockMovements.slice(0, 10);
 
@@ -177,22 +177,22 @@ const Dashboard: React.FC = () => {
                 <tr key={movement.id}>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      movement.movement_type === 'receipt' ? 'bg-green-100 text-green-800' :
-                      movement.movement_type === 'production' ? 'bg-blue-100 text-blue-800' :
-                      movement.movement_type === 'wastage' ? 'bg-red-100 text-red-800' :
+                      movement.movementType === 'receipt' ? 'bg-green-100 text-green-800' :
+                      movement.movementType === 'production' ? 'bg-blue-100 text-blue-800' :
+                      movement.movementType === 'wastage' ? 'bg-red-100 text-red-800' :
                       'bg-gray-100 text-gray-800'
                     }`}>
-                      {movement.movement_type.charAt(0).toUpperCase() + movement.movement_type.slice(1)}
+                      {movement.movementType.charAt(0).toUpperCase() + movement.movementType.slice(1)}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {movement.qty_base > 0 ? '+' : ''}{movement.qty_base}
+                    {movement.qtyBase > 0 ? '+' : ''}{movement.qtyBase}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {movement.reference_id || '-'}
+                    {movement.referenceId || '-'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(movement.created_at).toLocaleDateString()}
+                    {new Date(movement.createdAt).toLocaleDateString()}
                   </td>
                 </tr>
               ))}
