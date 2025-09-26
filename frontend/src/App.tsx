@@ -8,7 +8,8 @@ import {
   ClipboardList,
   BarChart3,
   Mic,
-  Bot
+  Bot,
+  HelpCircle
 } from 'lucide-react';
 import Dashboard from './components/Dashboard';
 import InventoryView from './components/InventoryView';
@@ -72,8 +73,19 @@ function App() {
               <ChefHat className="h-8 w-8 text-blue-600 mr-3" />
               <h1 className="text-2xl font-bold text-gray-900">School Catering Stock Management</h1>
             </div>
-            <div className="text-sm text-gray-500">
-              Central High School
+            <div className="flex items-center space-x-4">
+              <a
+                href="/USER_GUIDE.md"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center text-sm text-blue-600 hover:text-blue-800 transition-colors"
+              >
+                <HelpCircle className="h-4 w-4 mr-1" />
+                User Guide
+              </a>
+              <div className="text-sm text-gray-500">
+                Central High School
+              </div>
             </div>
           </div>
         </div>
