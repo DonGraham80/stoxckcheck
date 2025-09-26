@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using CateringApi.Models;
 
 namespace CateringApi.DTOs
 {
@@ -117,5 +118,66 @@ namespace CateringApi.DTOs
         
         [Required]
         public List<CountLineDto> Lines { get; set; } = new();
+    }
+
+    public class CreateSiteRequest
+    {
+        [Required]
+        public string Name { get; set; } = string.Empty;
+        
+        public string? Address { get; set; }
+        
+        [Required]
+        public List<CreateLocationRequest> Locations { get; set; } = new();
+    }
+
+    public class CreateLocationRequest
+    {
+        [Required]
+        public string Name { get; set; } = string.Empty;
+        
+        [Required]
+        public StorageType StorageType { get; set; }
+    }
+
+    public class LoginRequest
+    {
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+        
+        [Required]
+        public string Password { get; set; } = string.Empty;
+    }
+
+    public class RegisterRequest
+    {
+        [Required]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+        
+        [Required]
+        [MinLength(6)]
+        public string Password { get; set; } = string.Empty;
+        
+        [Required]
+        public string FirstName { get; set; } = string.Empty;
+        
+        [Required]
+        public string LastName { get; set; } = string.Empty;
+        
+        public string? TenantName { get; set; }
+        
+        public string? TenantId { get; set; }
+    }
+
+    public class GoogleAuthRequest
+    {
+        [Required]
+        public string IdToken { get; set; } = string.Empty;
+        
+        public string? TenantName { get; set; }
+        
+        public string? TenantId { get; set; }
     }
 }

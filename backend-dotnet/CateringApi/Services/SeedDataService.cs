@@ -24,7 +24,9 @@ namespace CateringApi.Services
                 Id = "user-1",
                 TenantId = tenant.Id,
                 Email = "admin@school.edu",
-                Name = "System Administrator"
+                UserName = "admin@school.edu",
+                FirstName = "System",
+                LastName = "Administrator"
             };
             context.Users.Add(user);
 

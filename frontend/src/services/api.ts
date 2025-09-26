@@ -12,19 +12,39 @@ import {
   CreateCountRequest
 } from '../types';
 
-const API_BASE_URL = 'http://localhost:5000/api/v1';
+const API_BASE_URL = 'http://localhost:5206/api/v1';
 
 class ApiService {
+  private getAuthToken(): string | null {
+    return localStorage.getItem('auth_token');
+  }
+
   private async request<T>(endpoint: string, options?: RequestInit): Promise<T> {
+    const token = this.getAuthToken();
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+
+    if (options?.headers) {
+      Object.assign(headers, options.headers);
+    }
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...options?.headers,
-      },
+      headers,
       ...options,
     });
 
     if (!response.ok) {
+      if (response.status === 401) {
+        localStorage.removeItem('auth_token');
+        localStorage.removeItem('auth_user');
+        localStorage.removeItem('auth_tenant');
+        window.location.reload();
+      }
       throw new Error(`API request failed: ${response.statusText}`);
     }
 
@@ -149,6 +169,17 @@ class ApiService {
     return this.request('/agent/execute', {
       method: 'POST',
       body: JSON.stringify({ plan_id: planId, confirmed }),
+    });
+  }
+
+  async createSite(data: {
+    name: string;
+    address?: string;
+    locations: Array<{ name: string; storageType: string }>;
+  }): Promise<{ id: string; message: string }> {
+    return this.request('/sites', {
+      method: 'POST',
+      body: JSON.stringify(data),
     });
   }
 }

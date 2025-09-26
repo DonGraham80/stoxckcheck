@@ -1,16 +1,17 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 using CateringApi.Models;
 
 namespace CateringApi.Data
 {
-    public class CateringDbContext : DbContext
+    public class CateringDbContext : IdentityDbContext<User>
     {
         public CateringDbContext(DbContextOptions<CateringDbContext> options) : base(options)
         {
         }
 
         public DbSet<Tenant> Tenants { get; set; }
-        public DbSet<User> Users { get; set; }
         public DbSet<Site> Sites { get; set; }
         public DbSet<Location> Locations { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }

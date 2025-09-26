@@ -79,4 +79,28 @@ namespace CateringApi.DTOs
         public DateTime CreatedAt { get; set; }
         public List<object> Lines { get; set; } = new();
     }
+
+    public class LoginResponse
+    {
+        public string Token { get; set; } = string.Empty;
+        public UserResponse User { get; set; } = null!;
+        public TenantResponse Tenant { get; set; } = null!;
+    }
+
+    public class UserResponse
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string? Role { get; set; }
+        public string TenantId { get; set; } = string.Empty;
+    }
+
+    public class TenantResponse
+    {
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string? Domain { get; set; }
+    }
 }

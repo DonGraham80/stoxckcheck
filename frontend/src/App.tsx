@@ -9,8 +9,12 @@ import {
   BarChart3,
   Mic,
   Bot,
-  HelpCircle
+  HelpCircle,
+  Building,
+  LogOut,
+  User
 } from 'lucide-react';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
 import Dashboard from './components/Dashboard';
 import InventoryView from './components/InventoryView';
 import ReceiptForm from './components/ReceiptForm';
@@ -21,15 +25,31 @@ import CountForm from './components/CountForm';
 // import VoiceInterface from './components/VoiceInterface';
 // import AgentInterface from './components/AgentInterface';
 import UserGuide from './components/UserGuide';
+import SiteManagement from './components/SiteManagement';
+import Login from './components/Login';
 
-type View = 'dashboard' | 'inventory' | 'receipt' | 'production' | 'wastage' | 'transfer' | 'count' | 'voice' | 'agent' | 'userguide';
+type View = 'dashboard' | 'inventory' | 'receipt' | 'production' | 'wastage' | 'transfer' | 'count' | 'voice' | 'agent' | 'userguide' | 'sites';
 
-function App() {
+const AppContent: React.FC = () => {
+  const { user, tenant, logout, isAuthenticated, isLoading } = useAuth();
   const [currentView, setCurrentView] = useState<View>('dashboard');
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (!isAuthenticated) {
+    return <Login />;
+  }
 
   const navigation = [
     { id: 'dashboard', label: 'Dashboard', icon: BarChart3 },
     { id: 'inventory', label: 'Inventory', icon: Package },
+    { id: 'sites', label: 'Sites', icon: Building },
     { id: 'receipt', label: 'Receipts', icon: Truck },
     { id: 'production', label: 'Production', icon: ChefHat },
     { id: 'wastage', label: 'Wastage', icon: Trash2 },
@@ -62,6 +82,8 @@ function App() {
         return <div className="p-6 text-center text-gray-500">AI Agent - Coming Soon</div>;
       case 'userguide':
         return <UserGuide />;
+      case 'sites':
+        return <SiteManagement />;
       default:
         return <Dashboard />;
     }
@@ -78,9 +100,20 @@ function App() {
               <h1 className="text-2xl font-bold text-gray-900">School Catering Stock Management</h1>
             </div>
             <div className="flex items-center space-x-4">
-              <div className="text-sm text-gray-500">
-                Central High School
+              <div className="flex items-center text-sm text-gray-500">
+                <User className="h-4 w-4 mr-1" />
+                {user?.firstName} {user?.lastName}
               </div>
+              <div className="text-sm text-gray-500">
+                {tenant?.name}
+              </div>
+              <button
+                onClick={logout}
+                className="flex items-center px-3 py-1 text-sm text-gray-700 hover:text-red-600 transition-colors"
+              >
+                <LogOut className="h-4 w-4 mr-1" />
+                Logout
+              </button>
             </div>
           </div>
         </div>
@@ -119,6 +152,14 @@ function App() {
         </main>
       </div>
     </div>
+  );
+};
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
 

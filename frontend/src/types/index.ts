@@ -1,9 +1,11 @@
+export type StorageType = 'Chilled' | 'Frozen' | 'Ambient';
+
 export interface Item {
   id: string;
   sku: string;
   name: string;
   category: string;
-  storageType: 'chilled' | 'frozen' | 'ambient';
+  storageType: StorageType;
   baseUom: string;
   packUom?: string;
   packSize?: number;
@@ -22,7 +24,7 @@ export interface Site {
 export interface Location {
   id: string;
   name: string;
-  storageType: 'chilled' | 'frozen' | 'ambient';
+  storageType: StorageType;
 }
 
 export interface Supplier {

@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using CateringApi.Data;
 using CateringApi.Models;
 using CateringApi.DTOs;
@@ -8,6 +10,7 @@ namespace CateringApi.Controllers
 {
     [ApiController]
     [Route("api/v1")]
+    [Authorize]
     public class InventoryController : ControllerBase
     {
         private readonly CateringDbContext _context;
@@ -15,6 +18,11 @@ namespace CateringApi.Controllers
         public InventoryController(CateringDbContext context)
         {
             _context = context;
+        }
+
+        private string GetTenantId()
+        {
+            return User.FindFirst("TenantId")?.Value ?? throw new UnauthorizedAccessException("Tenant ID not found in token");
         }
 
         [HttpPost("receipts")]
@@ -46,7 +54,7 @@ namespace CateringApi.Controllers
 
                     var movement = new StockMovement
                     {
-                        TenantId = "tenant-1", // Default tenant for MVP
+                        TenantId = GetTenantId(),
                         SiteId = request.SiteId,
                         ItemId = line.ItemId,
                         LotId = lot.Id,
@@ -109,7 +117,7 @@ namespace CateringApi.Controllers
                     
                     var movement = new StockMovement
                     {
-                        TenantId = "tenant-1",
+                        TenantId = GetTenantId(),
                         SiteId = request.SiteId,
                         ItemId = ingredient.ItemId,
                         LotId = firstLot.LotId,
@@ -220,7 +228,7 @@ namespace CateringApi.Controllers
                     {
                         var movement = new StockMovement
                         {
-                            TenantId = "tenant-1",
+                            TenantId = GetTenantId(),
                             SiteId = request.SiteId,
                             ItemId = line.ItemId,
                             LotId = line.LotId,
@@ -452,6 +460,75 @@ namespace CateringApi.Controllers
             }
             catch (Exception ex)
             {
+                return BadRequest(new { error = ex.Message });
+            }
+        }
+
+        [HttpPost("sites")]
+        public async Task<IActionResult> CreateSite([FromBody] CreateSiteRequest request)
+        {
+            try
+            {
+                Console.WriteLine($"CreateSite called with request: Name={request?.Name}, Address={request?.Address}, Locations count={request?.Locations?.Count}");
+                
+                if (request == null)
+                {
+                    Console.WriteLine("Request is null");
+                    return BadRequest(new { error = "Request body is null" });
+                }
+
+                if (request.Locations != null)
+                {
+                    foreach (var loc in request.Locations)
+                    {
+                        Console.WriteLine($"Location: Name={loc.Name}, StorageType={loc.StorageType}");
+                    }
+                }
+
+                var site = new Site
+                {
+                    TenantId = GetTenantId(),
+                    Name = request.Name,
+                    Address = request.Address
+                };
+
+                _context.Sites.Add(site);
+                await _context.SaveChangesAsync();
+
+                foreach (var locationRequest in request.Locations)
+                {
+                    var location = new Location
+                    {
+                        SiteId = site.Id,
+                        Name = locationRequest.Name,
+                        StorageType = locationRequest.StorageType
+                    };
+                    
+                    _context.Locations.Add(location);
+                }
+
+                await _context.SaveChangesAsync();
+
+                var response = new SiteResponse
+                {
+                    Id = site.Id,
+                    Name = site.Name,
+                    Address = site.Address,
+                    Locations = request.Locations.Select(l => new LocationResponse
+                    {
+                        Id = Guid.NewGuid().ToString(), // This will be updated after save
+                        Name = l.Name,
+                        StorageType = l.StorageType
+                    }).ToList()
+                };
+
+                Console.WriteLine($"Site created successfully: {site.Id}");
+                return Ok(new { id = site.Id, message = "Site created successfully", site = response });
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"CreateSite error: {ex.Message}");
+                Console.WriteLine($"CreateSite stack trace: {ex.StackTrace}");
                 return BadRequest(new { error = ex.Message });
             }
         }
